@@ -1,7 +1,6 @@
 {
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "edge"
-    }
-  }
+  "version": 2,
+  "buildCommand": "echo 'No build required'",
+  "outputDirectory": ".",
+  "framework": null
 }
