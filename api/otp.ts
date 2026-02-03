@@ -32,16 +32,17 @@ export default async function handler(request: NextRequest) {
   const otpCode = await generate({ secret });
 
   const now = Date.now();
-  const expiresIn = OTP_PERIOD - Math.floor((now / 1000) % OTP_PERIOD);
-  const timestampLackingMsPrecision = new Date(
+  const expiresAtMs = now + OTP_PERIOD * 1000;
+
+  const createdAtTimestampLackingMsPrecision = new Date(
     now - (now % 1000),
   ).toISOString();
 
   const event = {
     otpCode,
     secret,
-    timestampLackingMsPrecision,
-    expiresIn,
+    createdAtTimestampLackingMsPrecision,
+    expiresAt: new Date(expiresAtMs).toISOString(),
   };
 
   const key = `otp:${now}:${crypto.randomUUID()}`;
