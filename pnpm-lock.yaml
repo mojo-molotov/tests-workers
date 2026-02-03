@@ -11,9 +11,6 @@ importers:
       '@upstash/redis':
         specifier: ^1.36.2
         version: 1.36.2
-      next:
-        specifier: ^16.1.6
-        version: 16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       otplib:
         specifier: ^13.2.1
         version: 13.2.1
@@ -24,6 +21,9 @@ importers:
       '@vercel/node':
         specifier: ^5.5.28
         version: 5.5.28
+      next:
+        specifier: ^16.1.6
+        version: 16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3

@@ -12,11 +12,11 @@
   "packageManager": "pnpm@10.28.1",
   "dependencies": {
     "@upstash/redis": "^1.36.2",
-    "next": "^16.1.6",
     "otplib": "^13.2.1"
   },
   "devDependencies": {
     "@types/node": "^25.2.0",
+    "next": "^16.1.6",
     "@vercel/node": "^5.5.28",
     "typescript": "^5.9.3"
   }
