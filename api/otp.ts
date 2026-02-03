@@ -5,6 +5,8 @@ import isAuthorized from "../lib/isAuthorized";
 
 export const config = { runtime: "edge" };
 
+const SECRET_QUERY_PARAM_KEY = "secret";
+
 const OTP_SECRET_MIN_LENGTH = 32;
 const OTP_SECRET_MAX_LENGTH = 64;
 
@@ -52,7 +54,8 @@ export default async function handler(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const rawSecret = searchParams.get("secret") ?? generateRandomBase32Secret();
+  const rawSecret =
+    searchParams.get(SECRET_QUERY_PARAM_KEY) ?? generateRandomBase32Secret();
   const secret = ensureSecretLength(rawSecret);
 
   const otpCode = await generate({ secret });
@@ -64,7 +67,15 @@ export default async function handler(request: NextRequest) {
     now - (now % 1000),
   ).toISOString();
 
+  const freePayload: Record<string, string> = {};
+  searchParams.forEach((value, key) => {
+    if (key !== SECRET_QUERY_PARAM_KEY) {
+      freePayload[key] = value;
+    }
+  });
+
   const event = {
+    ...freePayload,
     otpCode,
     secret,
     createdAtTimestampLackingMsPrecision,
