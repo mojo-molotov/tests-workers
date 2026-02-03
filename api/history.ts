@@ -12,13 +12,24 @@ export default async function handler(request: NextRequest) {
     });
   }
 
-  const keys = await redis.keys("otp:*");
+  let cursor = "0";
+  const allEvents = [];
+  const BATCH_SIZE = 100;
 
-  const events = await Promise.all(
-    keys.map(async (key) => await redis.get(key)),
-  );
+  do {
+    const [newCursor, keys] = await redis.scan(cursor, {
+      match: "otp:*",
+      count: BATCH_SIZE,
+    });
+    cursor = newCursor;
 
-  return new Response(JSON.stringify(events.filter(Boolean)), {
+    if (keys.length > 0) {
+      const values = await redis.mget(...keys);
+      allEvents.push(...values.filter(Boolean));
+    }
+  } while (cursor !== "0");
+
+  return new Response(JSON.stringify(allEvents), {
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
