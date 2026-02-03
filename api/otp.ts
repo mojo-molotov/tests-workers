@@ -14,6 +14,8 @@ const BASE32_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 const OTP_TTL = 60;
 const OTP_HISTORY_TTL = OTP_TTL * 4;
 
+const MAX_FREE_PAYLOAD_SIZE = 4096;
+
 function generateRandomBase32Secret(length: number = 32): string {
   let secret = "";
   const randomValues = new Uint8Array(length);
@@ -54,6 +56,36 @@ export default async function handler(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
+
+  const freePayload: Record<string, string> = {};
+  let payloadSize = 0;
+
+  searchParams.forEach((value, key) => {
+    if (key === SECRET_QUERY_PARAM_KEY) return;
+
+    const entrySize = new TextEncoder().encode(key + value).length;
+    if (payloadSize + entrySize > MAX_FREE_PAYLOAD_SIZE) {
+      payloadSize += entrySize;
+      return;
+    }
+
+    freePayload[key] = value;
+    payloadSize += entrySize;
+  });
+
+  if (payloadSize > MAX_FREE_PAYLOAD_SIZE) {
+    return new Response(
+      JSON.stringify({
+        error: "Bad Request",
+        message: `Free payload exceeds maximum size of ${MAX_FREE_PAYLOAD_SIZE} bytes (got ${payloadSize} bytes)`,
+      }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  }
+
   const rawSecret =
     searchParams.get(SECRET_QUERY_PARAM_KEY) ?? generateRandomBase32Secret();
   const secret = ensureSecretLength(rawSecret);
@@ -66,13 +98,6 @@ export default async function handler(request: NextRequest) {
   const createdAtTimestampLackingMsPrecision = new Date(
     now - (now % 1000),
   ).toISOString();
-
-  const freePayload: Record<string, string> = {};
-  searchParams.forEach((value, key) => {
-    if (key !== SECRET_QUERY_PARAM_KEY) {
-      freePayload[key] = value;
-    }
-  });
 
   const event = {
     ...freePayload,

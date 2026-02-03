@@ -39,7 +39,11 @@ curl -H "x-api-key: SECRET" "https://your-api.vercel.app/api/otp?secret=JBSWY3DP
 curl -H "x-api-key: SECRET" "https://your-api.vercel.app/api/otp?email=test@example.com&userId=123&env=staging"
 ```
 
-> **Note:** If no `secret` is provided, a random Base32 secret is generated automatically. All additional query parameters are stored as-is in the event payload.
+> **Note:**
+>
+> - If no `secret` is provided, a random Base32 secret is generated automatically
+> - All additional query parameters are stored as-is in the event payload
+> - Free payload is limited to **4KB** (returns `400 Bad Request` if exceeded)
 
 **Retrieve OTP history:**
 
