@@ -8,9 +8,21 @@ export const config = { runtime: "edge" };
 const OTP_SECRET_MIN_LENGTH = 32;
 const OTP_SECRET_MAX_LENGTH = 64;
 
-const DEFAULT_OTP_SECRET = "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP";
+const BASE32_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 const OTP_TTL = 60;
 const OTP_HISTORY_TTL = OTP_TTL * 4;
+
+function generateRandomBase32Secret(length: number = 32): string {
+  let secret = "";
+  const randomValues = new Uint8Array(length);
+  crypto.getRandomValues(randomValues);
+
+  for (let i = 0; i < length; i++) {
+    secret += BASE32_ALPHABET[randomValues[i] % 32];
+  }
+
+  return secret;
+}
 
 function ensureSecretLength(secret: string): string {
   const cleaned = secret.toUpperCase().replace(/\s/g, "");
@@ -40,7 +52,7 @@ export default async function handler(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const rawSecret = searchParams.get("secret") ?? DEFAULT_OTP_SECRET;
+  const rawSecret = searchParams.get("secret") ?? generateRandomBase32Secret();
   const secret = ensureSecretLength(rawSecret);
 
   const otpCode = await generate({ secret });
