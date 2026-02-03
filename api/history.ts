@@ -15,10 +15,7 @@ export default async function handler(request: NextRequest) {
   const keys = await redis.keys("otp:*");
 
   const events = await Promise.all(
-    keys.map(async (key) => {
-      const value = await redis.get<string>(key);
-      return value ? JSON.parse(value) : null;
-    }),
+    keys.map(async (key) => await redis.get(key)),
   );
 
   return new Response(JSON.stringify(events.filter(Boolean)), {
