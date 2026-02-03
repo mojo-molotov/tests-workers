@@ -21,11 +21,31 @@ Returns ISO timestamps precise to seconds only (`.000Z`) to force proper concurr
 
 ### Usage
 
-Generate an OTP:  
-`curl -H "x-api-key: SECRET" "https://your-api.vercel.app/api/otp?secret={OTP_SECRET}"`
+**Generate an OTP:**
 
-Retrieve OTP history:  
-`curl -H "x-api-key: SECRET" "https://your-api.vercel.app/api/history"`
+```bash
+curl -H "x-api-key: SECRET" "https://your-api.vercel.app/api/otp"
+```
+
+**With a custom secret:**
+
+```bash
+curl -H "x-api-key: SECRET" "https://your-api.vercel.app/api/otp?secret=JBSWY3DPEHPK3PXP"
+```
+
+**With additional metadata (free payload):**
+
+```bash
+curl -H "x-api-key: SECRET" "https://your-api.vercel.app/api/otp?email=test@example.com&userId=123&env=staging"
+```
+
+> **Note:** If no `secret` is provided, a random Base32 secret is generated automatically. All additional query parameters are stored as-is in the event payload.
+
+**Retrieve OTP history:**
+
+```bash
+curl -H "x-api-key: SECRET" "https://your-api.vercel.app/api/history"
+```
 
 ---
 
