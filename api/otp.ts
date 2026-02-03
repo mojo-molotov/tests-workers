@@ -5,8 +5,17 @@ import isAuthorized from "../lib/isAuthorized";
 
 export const config = { runtime: "edge" };
 
-const DEFAULT_OTP_SECRET = "JBSWY3DPEHPK3PXP";
+const OTP_SECRET_MIN_LENGTH = 26;
+
+const DEFAULT_OTP_SECRET = "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP";
 const OTP_PERIOD = 30;
+
+function ensureSecretLength(secret: string): string {
+  if (secret.length >= OTP_SECRET_MIN_LENGTH) return secret;
+
+  const repetitions = Math.ceil(OTP_SECRET_MIN_LENGTH / secret.length);
+  return secret.repeat(repetitions).substring(0, OTP_SECRET_MIN_LENGTH);
+}
 
 export default async function handler(request: NextRequest) {
   if (!isAuthorized(request)) {
@@ -17,7 +26,8 @@ export default async function handler(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const secret = searchParams.get("secret") ?? DEFAULT_OTP_SECRET;
+  const rawSecret = searchParams.get("secret") ?? DEFAULT_OTP_SECRET;
+  const secret = ensureSecretLength(rawSecret);
 
   const otpCode = await generate({ secret });
 
