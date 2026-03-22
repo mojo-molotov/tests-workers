@@ -48,7 +48,7 @@ curl -H "x-api-key: SECRET" "https://your-api.vercel.app/api/otp?email=test@exam
 **Retrieve OTP history:**
 
 ```bash
-curl -H "x-api-key: SECRET" "https://your-api.vercel.app/api/history"
+curl -H "x-api-key: SECRET" "https://your-api.vercel.app/api/otp-history"
 ```
 
 ---
