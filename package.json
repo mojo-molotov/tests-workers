@@ -1,6 +1,6 @@
 {
   "name": "tests-workers",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,10 +9,10 @@
   "keywords": [],
   "author": "mojo-molotov",
   "license": "ISC",
-  "packageManager": "pnpm@10.28.1",
+  "packageManager": "pnpm@11.2.2",
   "dependencies": {
-    "@upstash/redis": "^1.36.2",
-    "otplib": "^13.2.1"
+    "@upstash/redis": "1.36.2",
+    "otplib": "13.2.1"
   },
   "devDependencies": {
     "@types/node": "^25.2.0",
